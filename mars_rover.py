@@ -46,7 +46,7 @@ class FacingNorth(MarsRoverState):
 
     
     def move(self, mars_rover, grid):
-        new_y = self.get_next_y_coord(mars_rover, 1, len(grid[0]))
+        new_y = self.get_next_y_coord(mars_rover, 1, len(grid))
         if self.is_facing_obstacle(grid, mars_rover.x, new_y):
             return True
         mars_rover.set_y(new_y)
@@ -64,7 +64,7 @@ class FacingEast(MarsRoverState):
 
 
     def move(self, mars_rover, grid):
-        new_x = self.get_next_x_coord(mars_rover, 1, len(grid))    
+        new_x = self.get_next_x_coord(mars_rover, 1, len(grid[0]))    
         if self.is_facing_obstacle(grid, new_x, mars_rover.y):
             return True
         mars_rover.set_x(new_x)
@@ -82,7 +82,7 @@ class FacingSouth(MarsRoverState):
 
 
     def move(self, mars_rover, grid):
-        new_y = self.get_next_y_coord(mars_rover, -1, len(grid[0]))
+        new_y = self.get_next_y_coord(mars_rover, -1, len(grid))
         if self.is_facing_obstacle(grid, mars_rover.x, new_y):
             return True
         mars_rover.set_y(new_y)
@@ -100,7 +100,7 @@ class FacingWest(MarsRoverState):
 
 
     def move(self, mars_rover, grid):
-        new_x = self.get_next_x_coord(mars_rover, -1, len(grid))
+        new_x = self.get_next_x_coord(mars_rover, -1, len(grid[0]))
         if self.is_facing_obstacle(grid, new_x, mars_rover.y):
             return True
         mars_rover.set_x(new_x)
