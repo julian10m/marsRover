@@ -22,7 +22,6 @@ class TestMarsRoverBasicMoves(unittest.TestCase):
         self.assertEqual(mars_rover.execute('M'), '1:7:W')
 
 
-
 class TestMarsRoverBasicRotations(unittest.TestCase):
     def testRotateFromNorth(self):
         mars_rover = MarsRoverAPI(MarsRover(0, 0, 'N'), [])
@@ -55,7 +54,13 @@ class TestMarsRoverPaths(unittest.TestCase):
     def testBorderWrapping(self):
         mars_rover = MarsRoverAPI(MarsRover(0, 0, 'S'), self.grid)
         self.assertEqual(mars_rover.execute('M'), '0:9:S')
+        self.assertEqual(mars_rover.execute('RRM'), '0:0:N')
         
+    def testBorderWrapping(self):
+        mars_rover = MarsRoverAPI(MarsRover(0, 0, 'W'), self.grid)
+        self.assertEqual(mars_rover.execute('M'), '9:0:W')
+        self.assertEqual(mars_rover.execute('LLM'), '0:0:E')
+
     def testPathWithoutObstacles(self):
         mars_rover = MarsRoverAPI(MarsRover(0, 0, 'N'), self.grid)
         self.assertEqual(mars_rover.execute('MMRMMLM'), '2:3:N')
