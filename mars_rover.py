@@ -23,10 +23,10 @@ class MarsRover():
         self.y = y
 
     def rotate_left(self):
-        self.direction = self.left_direction_update[self.mars_rover.direction]
+        self.direction = self.left_direction_update[self.direction]
 
     def rotate_right(self):
-        self.direction = self.right_direction_update[self.mars_rover.direction]
+        self.direction = self.right_direction_update[self.direction]
 
     def get_next_coord(self, current_coord, delta, side_length):
         next_coord = current_coord + delta
@@ -41,7 +41,6 @@ class MarsRover():
 
     def get_next_y_coord(self, delta, side_length):
         return self.get_next_coord(self.y, delta, side_length)        
-
 
 class MarsRoverAPI():
 
@@ -79,10 +78,10 @@ class MarsRoverAPI():
 
     def _execute(self, command):
         if command == 'R':
-            self.mars_rover.direction.rotate_right()
+            self.mars_rover.rotate_right()
             return None
         elif command == 'L':
-            self.mars_rover.direction.rotate_left()
+            self.mars_rover.rotate_left()
             return None
         else: # assuming that the input was validated before, we have command = 'M'
             return self.update_position()
