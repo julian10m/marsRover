@@ -103,14 +103,9 @@ class MarsRover():
         self.set_state_for_direction(direction)
 
     def set_state_for_direction(self, direction):
-        if direction == 'N':
-            self.set_state(FacingNorth())
-        elif direction == 'E':
-            self.set_state(FacingEast())
-        elif direction == 'S':
-            self.set_state(FacingSouth())
-        else:
-            self.set_state(FacingWest())
+        for cls in [FacingNorth, FacingEast, FacingSouth, FacingWest]:
+            if cls.direction == direction:
+                self.set_state(cls())
 
     def set_state(self, state):
         self.state = state
