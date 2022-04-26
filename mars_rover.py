@@ -3,15 +3,15 @@ from abc import ABCMeta, abstractmethod
 
 class MarsRoverState(metaclass=ABCMeta):
     @abstractmethod
-    def rotate_left():
+    def rotate_left(self, mars_rover):
         '''Defines what each command does.'''
 
     @abstractmethod
-    def rotate_right():
+    def rotate_right(self, mars_rover):
         '''Defines what each command does.'''
     
     @abstractmethod
-    def move():
+    def move(self, mars_rover):
         '''Defines what each command does.'''
 
     def get_next_coord(self, current_coord, delta, side_length):
@@ -86,7 +86,7 @@ class FacingWest(MarsRoverState):
     def rotate_left(self, mars_rover):
         mars_rover.set_state(FacingSouth())
 
-    def rotate_right(mars_rover):
+    def rotate_right(self, mars_rover):
         mars_rover.set_state(FacingNorth())
 
     def move(self, mars_rover, grid):

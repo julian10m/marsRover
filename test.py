@@ -8,7 +8,7 @@ class TestMarsRoverBasicMoves(unittest.TestCase):
     def testMoveNorth(self):
         mars_rover = MarsRoverAPI(MarsRover(2, 7, 'W'), self.grid)
         self.assertEqual(mars_rover.execute('M'), '1:7:W')
-    
+
     def testMoveSouth(self):
         mars_rover = MarsRoverAPI(MarsRover(2, 7, 'S'), self.grid)
         self.assertEqual(mars_rover.execute('M'), '2:6:S')
@@ -21,10 +21,32 @@ class TestMarsRoverBasicMoves(unittest.TestCase):
         mars_rover = MarsRoverAPI(MarsRover(2, 7, 'W'), self.grid)
         self.assertEqual(mars_rover.execute('M'), '1:7:W')
 
-    def testRotate(self):
-        mars_rover = MarsRoverAPI(MarsRover(0, 0, 'E'), self.grid)
+
+
+class TestMarsRoverBasicRotations(unittest.TestCase):
+    def testRotateFromNorth(self):
+        mars_rover = MarsRoverAPI(MarsRover(0, 0, 'N'), [])
+        self.assertEqual(mars_rover.execute('L'), '0:0:W')
+        self.assertEqual(mars_rover.execute('R'), '0:0:N')
+        self.assertEqual(mars_rover.execute('R'), '0:0:E')    
+
+    def testRotateFromEast(self):
+        mars_rover = MarsRoverAPI(MarsRover(0, 0, 'E'), [])
         self.assertEqual(mars_rover.execute('L'), '0:0:N')
         self.assertEqual(mars_rover.execute('R'), '0:0:E')
+        self.assertEqual(mars_rover.execute('R'), '0:0:S')
+
+    def testRotateFromSouth(self):
+        mars_rover = MarsRoverAPI(MarsRover(0, 0, 'S'), [])
+        self.assertEqual(mars_rover.execute('L'), '0:0:E')
+        self.assertEqual(mars_rover.execute('R'), '0:0:S')
+        self.assertEqual(mars_rover.execute('R'), '0:0:W')
+
+    def testRotateFromWest(self):
+        mars_rover = MarsRoverAPI(MarsRover(0, 0, 'W'), [])
+        self.assertEqual(mars_rover.execute('L'), '0:0:S')
+        self.assertEqual(mars_rover.execute('R'), '0:0:W')
+        self.assertEqual(mars_rover.execute('R'), '0:0:N')
 
 class TestMarsRoverPaths(unittest.TestCase):
     def setUp(self):
