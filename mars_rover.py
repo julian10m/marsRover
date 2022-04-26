@@ -1,4 +1,4 @@
-class Position():
+class MarsRover():
     def __init__(self, x, y):
         self.x =  x
         self.y = y
@@ -32,7 +32,7 @@ class Position():
     def obstacle_output(self, direction):
         return f'O:{self.coords_output(direction)}'
 
-class MarsRover():
+class MarsRoverAPI():
     right_direction_update = {
                 'N': 'E',
                 'E': 'S',
