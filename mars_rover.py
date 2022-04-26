@@ -34,6 +34,7 @@ class MarsRoverState(metaclass=ABCMeta):
     def is_facing_obstacle(self, grid, x, y):
         return grid[x][y] == 'O'
 
+
 class FacingNorth(MarsRoverState):
     direction = 'N'
 
@@ -112,7 +113,8 @@ class MarsRover():
         self.y = y
         self.state = None
         self.set_state_for_direction(direction)
-        
+
+
     def set_state_for_direction(self, direction):
         if direction == 'N':
             self.set_state(FacingNorth())
