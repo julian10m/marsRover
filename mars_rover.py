@@ -24,14 +24,6 @@ class MarsRover():
     def get_next_y_coord(self, delta, side_length):
         return self.get_next_coord(self.y, delta, side_length)        
 
-    def coords_string(self):
-        return ':'.join([str(self.x), str(self.y)])
-
-    def coords_output(self):
-        return ':'.join([self.coords_string(), self.direction])
-
-    def obstacle_output(self):
-        return f'O:{self.coords_output()}'
 
 class MarsRoverAPI():
     right_direction_update = {
@@ -50,6 +42,15 @@ class MarsRoverAPI():
         self.mars_rover = mars_rover
         self.grid = grid
 
+    def coords_string(self):
+        return ':'.join([str(self.mars_rover.x), str(self.mars_rover.y)])
+
+    def coords_output(self):
+        return ':'.join([self.coords_string(), self.mars_rover.direction])
+
+    def obstacle_output(self):
+        return f'O:{self.coords_output()}'
+
     def update_position(self):
         if self.mars_rover.direction == 'N' or self.mars_rover.direction == 'S':
             if self.mars_rover.direction == 'N':
@@ -57,7 +58,7 @@ class MarsRoverAPI():
             else:
                 new_y = self.mars_rover.get_next_y_coord(-1, len(self.grid[0]))
             if self.grid[self.mars_rover.x][new_y] == 'O':
-                return self.mars_rover.obstacle_output()
+                return self.obstacle_output()
             self.mars_rover.set_y(new_y)
         else:
             if self.mars_rover.direction == 'E':
@@ -84,4 +85,4 @@ class MarsRoverAPI():
             output = self._execute(c)
             if output is not None:
                 return output
-        return self.mars_rover.coords_output()
+        return self.coords_output()
