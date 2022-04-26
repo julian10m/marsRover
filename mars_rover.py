@@ -1,3 +1,4 @@
+
 class MarsRover():
     right_direction_update = {
                 'N': 'E',
@@ -42,6 +43,26 @@ class MarsRover():
     def get_next_y_coord(self, delta, side_length):
         return self.get_next_coord(self.y, delta, side_length)        
 
+    def update_position(self, grid):
+        if self.direction == 'N' or self.direction == 'S':
+            if self.direction == 'N':
+                new_y = self.get_next_y_coord(1, len(grid[0]))
+            else:
+                new_y = self.get_next_y_coord(-1, len(grid[0]))
+            if grid[self.x][new_y] == 'O':
+                return True
+            self.set_y(new_y)
+        else:
+            if self.direction == 'E':
+                new_x = self.get_next_x_coord(1, len(grid))
+            else: # direction = 'W'
+                new_x = self.get_next_x_coord(-1, len(grid))
+            if grid[new_x][self.y] == 'O':
+                return True
+            self.set_x(new_x)
+        return None
+
+
 class MarsRoverAPI():
 
     def __init__(self, mars_rover, grid):
@@ -57,34 +78,15 @@ class MarsRoverAPI():
     def obstacle_output(self):
         return f'O:{self.coords_output()}'
 
-    def update_position(self):
-        if self.mars_rover.direction == 'N' or self.mars_rover.direction == 'S':
-            if self.mars_rover.direction == 'N':
-                new_y = self.mars_rover.get_next_y_coord(1, len(self.grid[0]))
-            else:
-                new_y = self.mars_rover.get_next_y_coord(-1, len(self.grid[0]))
-            if self.grid[self.mars_rover.x][new_y] == 'O':
-                return self.obstacle_output()
-            self.mars_rover.set_y(new_y)
-        else:
-            if self.mars_rover.direction == 'E':
-                new_x = self.mars_rover.get_next_x_coord(1, len(self.grid))
-            else: # direction = 'W'
-                new_x = self.mars_rover.get_next_x_coord(-1, len(self.grid))
-            if self.grid[new_x][self.mars_rover.y] == 'O':
-                return self.mars_rover.obstacle_output()
-            self.mars_rover.set_x(new_x)
-        return None
 
     def _execute(self, command):
         if command == 'R':
             self.mars_rover.rotate_right()
-            return None
         elif command == 'L':
             self.mars_rover.rotate_left()
-            return None
         else: # assuming that the input was validated before, we have command = 'M'
-            return self.update_position()
+            if self.mars_rover.update_position(self.grid) is True:
+                return self.obstacle_output()
 
     def execute(self, commands):
         for c in commands:
