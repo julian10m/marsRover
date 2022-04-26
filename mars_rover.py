@@ -12,6 +12,26 @@ class Position():
     def to_string(self):
         return ':'.join([str(self.x), str(self.y)])
 
+    def get_next_coord(self, current_coord, delta, side_length):
+        next_coord = current_coord + delta
+        if next_coord < 0:
+            return side_length - 1
+        elif next_coord == side_length:
+            return 0
+        return next_coord
+
+    def get_next_x_coord(self, delta, side_length):
+        return self.get_next_coord(self.x, delta, side_length)
+
+    def get_next_y_coord(self, delta, side_length):
+        return self.get_next_coord(self.y, delta, side_length)        
+
+    def coords_output(self, direction):
+        return ':'.join([self.to_string(), direction])
+
+    def obstacle_output(self, direction):
+        return f'O:{self.coords_output(direction)}'
+
 class MarsRover():
     right_direction_update = {
                 'N': 'E',
@@ -30,42 +50,22 @@ class MarsRover():
         self.direction = direction
         self.grid = grid
 
-    def get_next_coord(self, current_coord, delta, side_length):
-        next_coord = current_coord + delta
-        if next_coord < 0:
-            return side_length - 1
-        elif next_coord == side_length:
-            return 0
-        return next_coord
-
-    def get_next_x_coord(self, delta):
-        return self.get_next_coord(self.position.x, delta, len(self.grid[0]))
-
-    def get_next_y_coord(self, delta):
-        return self.get_next_coord(self.position.y, delta, len(self.grid))        
-
-    def coords_output(self, position):
-        return ':'.join([position.to_string(), self.direction])
-
-    def obstacle_output(self):
-        return f'O:{self.coords_output(self.position)}'
-
     def update_position(self):
         if self.direction == 'N' or self.direction == 'S':
             if self.direction == 'N':
-                new_y = self.get_next_y_coord(1)
+                new_y = self.position.get_next_y_coord(1, len(self.grid[0]))
             else:
-                new_y = self.get_next_y_coord(-1)
+                new_y = self.position.get_next_y_coord(-1, len(self.grid[0]))
             if self.grid[self.position.x][new_y] == 'O':
-                return self.obstacle_output()
+                return self.position.obstacle_output(self.direction)
             self.position.set_y(new_y)
         else:
             if self.direction == 'E':
-                new_x = self.get_next_x_coord(1)
+                new_x = self.position.get_next_x_coord(1, len(self.grid))
             else: # direction = 'W'
-                new_x = self.get_next_x_coord(-1)
+                new_x = self.position.get_next_x_coord(-1, len(self.grid))
             if self.grid[new_x][self.position.y] == 'O':
-                return self.obstacle_output()
+                return self.position.obstacle_output(self.direction)
             self.position.set_x(new_x)
         return None
 
@@ -84,4 +84,4 @@ class MarsRover():
             output = self._execute(c)
             if output is not None:
                 return output
-        return self.coords_output(self.position)
+        return self.position.coords_output(self.direction)
