@@ -1,3 +1,4 @@
+from abc import abstractstaticmethod, ABCMeta
 
 class MarsRover():
     right_direction_update = {
@@ -62,35 +63,60 @@ class MarsRover():
             self.set_x(new_x)
         return None
 
+class ICommand(metaclass=ABCMeta):
+    def __init__(self, mars_rover):
+       self._mars_rover = mars_rover
+
+    @abstractstaticmethod
+    def execute():
+        '''Defines what each command does.'''
+
+class RotateLeft(ICommand):
+    def execute(self):
+        self._mars_rover.rotate_left()
+
+class RotateRight(ICommand):
+    def execute(self):
+        self._mars_rover.rotate_right()
+
+class Move(ICommand):
+    def __init__(self, mars_rover, grid):
+       super().__init__(mars_rover)
+       self._grid = grid
+
+    def execute(self):
+        return self._mars_rover.update_position(self._grid)
+
 
 class MarsRoverAPI():
 
     def __init__(self, mars_rover, grid):
         self.mars_rover = mars_rover
         self.grid = grid
+        self.commands = self.register_commands()
+
+
+    def register_commands(self):
+        return {'L': RotateLeft(self.mars_rover),
+                'R': RotateRight(self.mars_rover),
+                'M': Move(self.mars_rover, self.grid),}
+
 
     def coords_string(self):
         return ':'.join([str(self.mars_rover.x), str(self.mars_rover.y)])
 
+
     def coords_output(self):
         return ':'.join([self.coords_string(), self.mars_rover.direction])
+
 
     def obstacle_output(self):
         return f'O:{self.coords_output()}'
 
 
-    def _execute(self, command):
-        if command == 'R':
-            self.mars_rover.rotate_right()
-        elif command == 'L':
-            self.mars_rover.rotate_left()
-        else: # assuming that the input was validated before, we have command = 'M'
-            if self.mars_rover.update_position(self.grid) is True:
-                return self.obstacle_output()
-
     def execute(self, commands):
         for c in commands:
-            output = self._execute(c)
-            if output is not None:
-                return output
+            output = self.commands[c].execute()
+            if output is True:
+                return self.obstacle_output()
         return self.coords_output()
