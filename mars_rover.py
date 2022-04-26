@@ -1,4 +1,16 @@
 class MarsRover():
+    right_direction_update = {
+                'N': 'E',
+                'E': 'S',
+                'S': 'W',
+                'W': 'N',}
+
+    left_direction_update = {
+                'E': 'N',
+                'S': 'E',
+                'W': 'S',
+                'N': 'W',}
+
     def __init__(self, x, y, direction):
         self.x =  x
         self.y = y
@@ -9,6 +21,12 @@ class MarsRover():
     
     def set_y(self, y):
         self.y = y
+
+    def rotate_left(self):
+        self.direction = self.left_direction_update[self.mars_rover.direction]
+
+    def rotate_right(self):
+        self.direction = self.right_direction_update[self.mars_rover.direction]
 
     def get_next_coord(self, current_coord, delta, side_length):
         next_coord = current_coord + delta
@@ -26,17 +44,6 @@ class MarsRover():
 
 
 class MarsRoverAPI():
-    right_direction_update = {
-                'N': 'E',
-                'E': 'S',
-                'S': 'W',
-                'W': 'N',}
-
-    left_direction_update = {
-                'E': 'N',
-                'S': 'E',
-                'W': 'S',
-                'N': 'W',}
 
     def __init__(self, mars_rover, grid):
         self.mars_rover = mars_rover
@@ -72,10 +79,10 @@ class MarsRoverAPI():
 
     def _execute(self, command):
         if command == 'R':
-            self.mars_rover.direction = self.right_direction_update[self.mars_rover.direction]
+            self.mars_rover.direction.rotate_right()
             return None
         elif command == 'L':
-            self.mars_rover.direction = self.left_direction_update[self.mars_rover.direction]
+            self.mars_rover.direction.rotate_left()
             return None
         else: # assuming that the input was validated before, we have command = 'M'
             return self.update_position()
