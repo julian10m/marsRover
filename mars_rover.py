@@ -7,28 +7,35 @@ class MarsRover():
                 'S': 'W',
                 'W': 'N',}
 
+
     left_direction_update = {
                 'E': 'N',
                 'S': 'E',
                 'W': 'S',
                 'N': 'W',}
 
+
     def __init__(self, x, y, direction):
         self.x =  x
         self.y = y
         self.direction = direction
         
+
     def set_x(self, x):
         self.x = x
     
+
     def set_y(self, y):
         self.y = y
+
 
     def rotate_left(self):
         self.direction = self.left_direction_update[self.direction]
 
+
     def rotate_right(self):
         self.direction = self.right_direction_update[self.direction]
+
 
     def get_next_coord(self, current_coord, delta, side_length):
         next_coord = current_coord + delta
@@ -38,11 +45,14 @@ class MarsRover():
             return 0
         return next_coord
 
+
     def get_next_x_coord(self, delta, side_length):
         return self.get_next_coord(self.x, delta, side_length)
 
+
     def get_next_y_coord(self, delta, side_length):
         return self.get_next_coord(self.y, delta, side_length)        
+
 
     def update_position(self, grid):
         if self.direction == 'N' or self.direction == 'S':
@@ -63,26 +73,34 @@ class MarsRover():
             self.set_x(new_x)
         return None
 
+
 class ICommand(metaclass=ABCMeta):
     def __init__(self, mars_rover):
        self._mars_rover = mars_rover
+
 
     @abstractstaticmethod
     def execute():
         '''Defines what each command does.'''
 
+
 class RotateLeft(ICommand):
     def execute(self):
         self._mars_rover.rotate_left()
 
+
 class RotateRight(ICommand):
+
     def execute(self):
         self._mars_rover.rotate_right()
 
+
 class Move(ICommand):
+
     def __init__(self, mars_rover, grid):
        super().__init__(mars_rover)
        self._grid = grid
+
 
     def execute(self):
         return self._mars_rover.update_position(self._grid)
