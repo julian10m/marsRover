@@ -1,41 +1,18 @@
 from abc import abstractstaticmethod, ABCMeta
 
-class MarsRover():
-    right_direction_update = {
-                'N': 'E',
-                'E': 'S',
-                'S': 'W',
-                'W': 'N',}
 
+class MarsRoverState(metaclass=ABCMeta):
+    @abstractstaticmethod
+    def rotate_left():
+        '''Defines what each command does.'''
 
-    left_direction_update = {
-                'E': 'N',
-                'S': 'E',
-                'W': 'S',
-                'N': 'W',}
+    @abstractstaticmethod
+    def rotate_right():
+        '''Defines what each command does.'''
 
-
-    def __init__(self, x, y, direction):
-        self.x =  x
-        self.y = y
-        self.direction = direction
-        
-
-    def set_x(self, x):
-        self.x = x
-    
-
-    def set_y(self, y):
-        self.y = y
-
-
-    def rotate_left(self):
-        self.direction = self.left_direction_update[self.direction]
-
-
-    def rotate_right(self):
-        self.direction = self.right_direction_update[self.direction]
-
+    @abstractstaticmethod
+    def move():
+        '''Defines what each command does.'''
 
     def get_next_coord(self, current_coord, delta, side_length):
         next_coord = current_coord + delta
@@ -46,32 +23,130 @@ class MarsRover():
         return next_coord
 
 
-    def get_next_x_coord(self, delta, side_length):
-        return self.get_next_coord(self.x, delta, side_length)
+    def get_next_x_coord(self, mars_rover, delta, side_length):
+        return self.get_next_coord(mars_rover.x, delta, side_length)
 
 
-    def get_next_y_coord(self, delta, side_length):
-        return self.get_next_coord(self.y, delta, side_length)        
+    def get_next_y_coord(self, mars_rover, delta, side_length):
+        return self.get_next_coord(mars_rover.y, delta, side_length)
 
 
-    def update_position(self, grid):
-        if self.direction == 'N' or self.direction == 'S':
-            if self.direction == 'N':
-                new_y = self.get_next_y_coord(1, len(grid[0]))
-            else:
-                new_y = self.get_next_y_coord(-1, len(grid[0]))
-            if grid[self.x][new_y] == 'O':
-                return True
-            self.set_y(new_y)
+class FacingNorth(MarsRoverState):
+    direction = 'N'
+
+    def rotate_left(self, mars_rover):
+        mars_rover.set_state(FacingWest())
+
+
+    def rotate_right(self, mars_rover):
+        mars_rover.set_state(FacingEast())
+
+    
+    def move(self, mars_rover, grid):
+        new_y = self.get_next_y_coord(mars_rover, 1, len(grid[0]))
+        if grid[mars_rover.x][new_y] == 'O':
+            return True
+        mars_rover.set_y(new_y)
+
+
+class FacingEast(MarsRoverState):
+    direction = 'E'
+
+    def rotate_left(self, mars_rover):
+        mars_rover.set_state(FacingNorth())
+
+
+    def rotate_right(mars_rover):
+        mars_rover.set_state(FacingSouth())
+
+
+    def move(self, mars_rover, grid):
+        new_x = self.get_next_x_coord(mars_rover, 1, len(grid))    
+        if grid[new_x][mars_rover.y] == 'O':
+            return True
+        mars_rover.set_x(new_x)
+
+
+class FacingSouth(MarsRoverState):
+    direction = 'S'
+
+    def rotate_left(self, mars_rover):
+        mars_rover.set_state(FacingEast())
+
+
+    def rotate_right(mars_rover):
+        mars_rover.set_state(FacingWest())
+
+
+    def move(self, mars_rover, grid):
+        new_y = self.get_next_y_coord(mars_rover, -1, len(grid[0]))
+        if grid[mars_rover.x][new_y] == 'O':
+            return True
+        mars_rover.set_y(new_y)
+
+
+class FacingWest(MarsRoverState):
+    direction = 'W'
+
+    def rotate_left(self, mars_rover):
+        mars_rover.set_state(FacingSouth())
+
+
+    def rotate_right(mars_rover):
+        mars_rover.set_state(FacingNorth())
+
+
+    def move(self, mars_rover, grid):
+        new_x = self.get_next_x_coord(mars_rover, -1, len(grid))
+        if grid[new_x][mars_rover.y] == 'O':
+            return True
+        mars_rover.set_x(new_x)
+
+
+class MarsRover():
+    def __init__(self, x, y, direction):
+        self.x =  x
+        self.y = y
+        self.state = None
+        self.set_state_for_direction(direction)
+        
+    def set_state_for_direction(self, direction):
+        if direction == 'N':
+            self.set_state(FacingNorth())
+        elif direction == 'E':
+            self.set_state(FacingEast())
+        elif direction == 'S':
+            self.set_state(FacingSouth())
         else:
-            if self.direction == 'E':
-                new_x = self.get_next_x_coord(1, len(grid))
-            else: # direction = 'W'
-                new_x = self.get_next_x_coord(-1, len(grid))
-            if grid[new_x][self.y] == 'O':
-                return True
-            self.set_x(new_x)
-        return None
+            self.set_state(FacingWest())
+
+
+    def set_state(self, state):
+        self.state = state
+
+
+    def set_x(self, x):
+        self.x = x
+    
+
+    def set_y(self, y):
+        self.y = y
+
+
+    def set_direction(self, direction):
+        self.direction = direction 
+
+
+    def rotate_left(self):
+        self.state.rotate_left(self)
+
+
+    def rotate_right(self):
+        self.state.rotate_right(self)
+
+
+    def move(self, grid):
+        return self.state.move(self, grid)
 
 
 class ICommand(metaclass=ABCMeta):
@@ -90,24 +165,21 @@ class RotateLeft(ICommand):
 
 
 class RotateRight(ICommand):
-
     def execute(self):
         self._mars_rover.rotate_right()
 
 
 class Move(ICommand):
-
     def __init__(self, mars_rover, grid):
        super().__init__(mars_rover)
        self._grid = grid
 
 
     def execute(self):
-        return self._mars_rover.update_position(self._grid)
+        return self._mars_rover.move(self._grid)
 
 
 class MarsRoverAPI():
-
     def __init__(self, mars_rover, grid):
         self.mars_rover = mars_rover
         self.grid = grid
@@ -125,7 +197,7 @@ class MarsRoverAPI():
 
 
     def coords_output(self):
-        return ':'.join([self.coords_string(), self.mars_rover.direction])
+        return ':'.join([self.coords_string(), self.mars_rover.state.direction])
 
 
     def obstacle_output(self):
