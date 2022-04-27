@@ -16,9 +16,7 @@ class MarsRoverState(metaclass=ABCMeta):
 
     def get_next_coord(self, current_coord, delta, side_length):
         next_coord = current_coord + delta
-        if next_coord < 0:
-            return side_length + next_coord
-        elif next_coord >= side_length:
+        if next_coord < 0 or next_coord >= side_length:
             return next_coord % side_length
         return next_coord
 
