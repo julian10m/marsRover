@@ -21,6 +21,16 @@ class TestMarsRoverBasicMoves(unittest.TestCase):
         mars_rover_api = MarsRoverAPI(MarsRover(2, 7, 'W'), self.grid)
         self.assertEqual(mars_rover_api.execute('M'), '1:7:W')
 
+    def testMoveIncresingStepSize(self):
+        mars_rover_api = MarsRoverAPI(MarsRover(2, 7, 'W'), self.grid)
+        MarsRover.step_size = 2
+        self.assertEqual(mars_rover_api.execute('M'), '0:7:W')
+        MarsRover.step_size = len(self.grid[0])
+        self.assertEqual(mars_rover_api.execute('M'), '0:7:W')
+        MarsRover.step_size = 2 * len(self.grid[0])
+        self.assertEqual(mars_rover_api.execute('M'), '0:7:W')
+        MarsRover.step_size = 2 * len(self.grid[0]) + 1
+        self.assertEqual(mars_rover_api.execute('M'), '9:7:W')
 
 class TestMarsRoverBasicRotations(unittest.TestCase):
     def testRotateFromNorth(self):
@@ -50,6 +60,7 @@ class TestMarsRoverBasicRotations(unittest.TestCase):
 class TestMarsRoverPaths(unittest.TestCase):
     def setUp(self):
         self.grid = [['' for i in range(10)] for i in range(10)]
+        MarsRover.step_size = 1
 
     def testBorderWrapping(self):
         mars_rover_api = MarsRoverAPI(MarsRover(0, 0, 'S'), self.grid)
