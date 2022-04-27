@@ -17,9 +17,9 @@ class MarsRoverState(metaclass=ABCMeta):
     def get_next_coord(self, current_coord, delta, side_length):
         next_coord = current_coord + delta
         if next_coord < 0:
-            return side_length - 1
-        elif next_coord == side_length:
-            return 0
+            return side_length + next_coord
+        elif next_coord >= side_length:
+            return next_coord % side_length
         return next_coord
 
     def get_next_x_coord(self, mars_rover, delta, side_length):
@@ -42,7 +42,7 @@ class FacingNorth(MarsRoverState):
         mars_rover.set_state(FacingEast())
 
     def move(self, mars_rover, grid):
-        new_y = self.get_next_y_coord(mars_rover, 1, len(grid))
+        new_y = self.get_next_y_coord(mars_rover, mars_rover.step_size, len(grid))
         if self.is_facing_obstacle(grid, mars_rover.x, new_y):
             return True
         mars_rover.set_y(new_y)
@@ -58,7 +58,7 @@ class FacingEast(MarsRoverState):
         mars_rover.set_state(FacingSouth())
 
     def move(self, mars_rover, grid):
-        new_x = self.get_next_x_coord(mars_rover, 1, len(grid[0]))
+        new_x = self.get_next_x_coord(mars_rover, mars_rover.step_size, len(grid[0]))
         if self.is_facing_obstacle(grid, new_x, mars_rover.y):
             return True
         mars_rover.set_x(new_x)
@@ -74,7 +74,7 @@ class FacingSouth(MarsRoverState):
         mars_rover.set_state(FacingWest())
 
     def move(self, mars_rover, grid):
-        new_y = self.get_next_y_coord(mars_rover, -1, len(grid))
+        new_y = self.get_next_y_coord(mars_rover, -1 * mars_rover.step_size, len(grid))
         if self.is_facing_obstacle(grid, mars_rover.x, new_y):
             return True
         mars_rover.set_y(new_y)
@@ -90,12 +90,14 @@ class FacingWest(MarsRoverState):
         mars_rover.set_state(FacingNorth())
 
     def move(self, mars_rover, grid):
-        new_x = self.get_next_x_coord(mars_rover, -1, len(grid[0]))
+        new_x = self.get_next_x_coord(mars_rover, -1 * mars_rover.step_size, len(grid[0]))
         if self.is_facing_obstacle(grid, new_x, mars_rover.y):
             return True
         mars_rover.set_x(new_x)
 
 class MarsRover():
+    step_size = 1
+
     def __init__(self, x, y, direction):
         self.x = x
         self.y = y
